@@ -1,0 +1,270 @@
+openapi: 3.0.3
+info:
+  title: DSO LV Viewer - Deeplink
+  description: |
+    Vastleggen van de toestand van een DSO Viewer pagina met het doel om deze later weer te kunnen herstellen.
+
+    Concept:
+
+    - gebruik key - blob (om toestand vast te leggen). De blob is een string met daarin een JSON object.
+
+  contact:
+    name: DSO API-register
+    url: 'https://aandeslagmetdeomgevingswet.nl/ontwikkelaarsportaal/api-register/'
+    email: bart.vanpelt@kadaster.nl
+  license:
+    name: Digitaal Stelsel Omgevingswet (DSO)
+    url: 'https://aandeslagmetdeomgevingswet.nl/ontwikkelaarsportaal/digitaal-stelsel/'
+  version: "0.1"
+servers:
+  - url: https://service.int.omgevingswet.overheid.nl/publiek/sessie/api/uitwisselen/v1
+    description: DSO-LV int deeplink
+  - url: https://service.acc.omgevingswet.overheid.nl/publiek/sessie/api/uitwisselen/v1
+    description: DSO-LV acceptatie deeplink
+  - url: https://service.dmo.omgevingswet.overheid.nl/publiek/sessie/api/uitwisselen/v1
+    description: DSO-LV demo deeplink
+  - url: https://service.pre.omgevingswet.overheid.nl/publiek/sessie/api/uitwisselen/v1
+    description: DSO-LV pre-productie deeplink
+  - url: https://service.omgevingswet.overheid.nl/publiek/sessie/api/uitwisselen/v1
+    description: DSO-LV productie deeplink
+tags:
+  - name: Deeplink
+    description: Vastleggen / ophalen toestand van DSO Viewer
+paths:
+  /toestanden/{identificatie}:
+    summary: Vastleggen/Ophalen van de toestand van een DSO LV Viewer
+    description: Vastleggen/Ophalen van de toestand van een DSO LV Viewer
+    get:
+      tags:
+        - Deeplink
+      parameters:
+        - name: identificatie
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Resultaat van informatieproduct bevraging
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeeplinkToestand'
+              examples:
+                response:
+                  $ref: '#/components/examples/DeeplinkToestand'
+  /toestanden:
+    summary: Vastleggen/Ophalen van de toestand van een DSO LV Viewer
+    description: Vastleggen/Ophalen van de toestand van een DSO LV Viewer
+    post:
+      tags:
+        - Deeplink
+      summary: Vastleggen van DSO LV viewer toestand
+      description: Vastleggen van de toestand van een DSO LV Viewer in de vorm van een deeplink key en de DSO LV toestand
+      operationId: vastleggen
+      requestBody:
+        description: >
+          DeeplinkToestand
+          
+          De toestand van de DSO-LV Viewer applicatie
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeeplinkToestand'
+            examples:
+              request:
+                $ref: '#/components/examples/DeeplinkToestand'
+        required: true
+      responses:
+        '200':
+          description: Resultaat van informatieproduct bevraging
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeeplinkId'
+              examples:
+                response:
+                  $ref: '#/components/examples/DeeplinkId'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                response:
+                  $ref: '#/components/examples/BadRequestResponse'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                response:
+                  $ref: '#/components/examples/NotFoundResponse'
+        '406':
+          description: Not acceptable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                response:
+                  $ref: '#/components/examples/NotAcceptableResponse'
+        '412':
+          description: Precondition failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                response:
+                  $ref: '#/components/examples/PreconditionFailedResponse'
+        default:
+          description: Default error sample response
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+components:
+  examples:
+    BadRequestResponse:
+      summary: Ongeldig request
+      value:
+        type: https://content/omgevingswet.overheid.nl/fout/id/concept/http400
+        title: Bad request
+        status: 400
+        detail: Het aangeboden request voldoet niet aan de eisen en is niet te verwerken
+        instance: https://service.omgevingswet.overheid.nl/publiek/natuur/api/v1/bijendiversiteit
+    DeeplinkId:
+      summary: Resultaat van een bevraging van één of meerdere omgevingsaspecten
+      value: 74ad255f-26d0-4220-9b6e-21a0caf19bd4
+    DeeplinkToestand:
+      summary: Voorbeeld van zoekparameters
+      value:
+        versie: '1.0.1'
+        toestand: '{document: "/akn/nl/act/gm0037/2019/3520-example", locatie: "Laan van westenenk 701 Apeldoorn"}'
+    NotAcceptableResponse:
+      summary: Niet geaccepteerd request
+      value:
+        type: https://content/omgevingswet.overheid.nl/fout/id/concept/http406
+        title: Gewenste formaat is niet geaccepteerd
+        status: 406
+        detail: Het gewenste formaat kan niet geleverd worden.
+        instance: https://service.omgevingswet.overheid.nl/publiek/geluid/api/opvragen/v1/bijendiversiteit/orienteren/_zoek
+    NotFoundResponse:
+      summary: Niet gevonden
+      value:
+        type: https://content/omgevingswet.overheid.nl/fout/id/concept/http404
+        title: NotFound request
+        status: 404
+        detail: Het aangeboden request vindt geen resultaten
+        instance: https://service.omgevingswet.overheid.nl/publiek/geluid/api/opvragen/v1/bijendiversiteit/orienteren/_zoek
+    PreconditionFailedResponse:
+      summary: Precondities voldoen niet
+      value:
+        type: https://content/omgevingswet.overheid.nl/fout/id/concept/http412
+        title: Precondition failed request
+        status: 412
+        detail: Het aangeboden request voldoet niet aan de precondities
+        instance: https://service.omgevingswet.overheid.nl/publiek/geluid/api/opvragen/v1/geluid/orienteren/_zoek
+    ProblemResponse:
+      summary: Onverwacht probleem
+      value:
+        type: https://content/omgevingswet.overheid.nl/fout/id/concept/http412
+        title: Onverwacht probleem
+        status: 412
+        detail: Er is een onverwacht probleem opgetreden
+        instance: https://service.omgevingswet.overheid.nl/publiek/geluid/api/opvragen/v1/geluid/orienteren/_zoek
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotAcceptable:
+      description: Not acceptable
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    NotFound:
+      description: Not found
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+    PreconditionFailed:
+      description: Precondition failed
+      content:
+        application/problem+json:
+          schema:
+            $ref: '#/components/schemas/Problem'
+  schemas:
+    DeeplinkId:
+      description: |
+        Unieke sleutel gerelateerd aan de toestand van de DSO LV webapplicatie
+      type: string
+    DeeplinkToestand:
+      description: Representatie van de toestand van de DSO LV webapplicatie
+      type: object
+      required:
+        - version
+        - toestand
+      properties:
+        version:
+          description: |
+            De versie van een deeplinktoestand volgt semversioning met major.minor.patch nummer
+            Hierbij betekent: 
+            - wijziging in major onderdeel van het versie nummer, dat de toestand door de viewer niet meer te herstellen is.
+            - wijziging in minor onderdeel van het versie nummer, dat de toestand wel te herstellen is, maar er mogelijk kleine verschillen zijn tussen de orginele toestand en de toestand zoals die vanuit de deeplinktoestand hersteld wordt.
+            - wijziging in patch onderdeel van het versie nummer, er is een minimale wijziging in het interface geweest.
+          type: string
+        toestand:
+          description: |
+            De string representatie van de toestand van de DSO LV webapplicatie 
+          type: string
+    Problem:
+      type: object
+      properties:
+        type:
+          type: string
+          description: Absolute URI die het probleemtype identificeert.
+          format: uri
+          default: about:blank
+        title:
+          type: string
+          description: >-
+            Een korte samenvatting van het probleemtype bedoeld voor
+            ontwikkelaars. 
+        status:
+          maximum: 600
+          exclusiveMaximum: true
+          minimum: 100
+          type: integer
+          description: >-
+            De HTTP statuscode gegenereerd door de server waar het probleem zich
+            voordoet. 
+          format: int32
+          example: 503
+        detail:
+          type: string
+          description: Mens-leesbare uitleg van dit specifieke probleem.
+          example: Er is een onbekend probleem opgetreden
+        instance:
+          type: string
+          description: Absolute URI dat dit specifieke probleem identificeert.
+          format: uri
+      description: >-
+        Standaardformaat (`application/problem+json`) voor probleemdetails in
+        HTTP API's (RFC 7807).          
+  securitySchemes:
+    api_key:
+      type: apiKey
+      description: API key to authorize requests.
+      name: api_key
+      in: header
+security:
+  - api_key: [ ]

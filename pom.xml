@@ -8,15 +8,78 @@
 		<version>3.3.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
 	<groupId>nl.bsoft</groupId>
 	<artifactId>deeplink</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>deeplink</name>
 	<description>Demo project for Spring Boot</description>
+
+	<licenses>
+		<license>
+			<name>MIT</name>
+			<url>https://opensource.org/license/mit/</url>
+		</license>
+	</licenses>
+
+	<issueManagement>
+		<system>git</system>
+		<url>https://github.com/bvpelt/deeplink/issues</url>
+	</issueManagement>
+
+	<scm>
+		<connection>scm:git:https://github.com/bvpelt/deeplink</connection>
+		<developerConnection>scm:git:https://github.com/bvpelt/deeplink</developerConnection>
+		<url>https://github.com/bvpelt/deeplink/</url>
+	</scm>
+
+	<organization>
+		<name>BSoft</name>
+		<url>http://bsoft.nl/</url>
+	</organization>
+
+	<developers>
+		<developer>
+			<name>Bart van Pelt</name>
+			<email>brtvnplt@gmail.com</email>
+			<id>bvp</id>
+			<organization>bsoft.nl</organization>
+			<roles>
+				<role>
+					developer
+				</role>
+			</roles>
+		</developer>
+	</developers>
+
 	<properties>
-		<java.version>17</java.version>
+		<java.version>18</java.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<flyway-core.version>10.4.1</flyway-core.version>
+		<io.swagger.version>2.2.20</io.swagger.version>
+		<jakarta.validation.version>3.0.2</jakarta.validation.version>
+		<org.lombok.version>1.18.30</org.lombok.version>
+		<openapi-plugin.version>7.2.0</openapi-plugin.version>
+		<org.openapitools.nullable>0.2.6</org.openapitools.nullable>
+		<org.postgresql.version>42.7.2</org.postgresql.version>
+		<org.springdoc.version>2.3.0</org.springdoc.version>
 	</properties>
+
 	<dependencies>
+		<dependency>
+			<groupId>io.swagger.core.v3</groupId>
+			<artifactId>swagger-annotations-jakarta</artifactId>
+			<version>${io.swagger.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>${jakarta.validation.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -37,11 +100,47 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+			<version>${flyway-core.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${org.postgresql.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${org.lombok.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>${org.openapitools.nullable}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${org.springdoc.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.vladmihalcea</groupId>
+			<artifactId>hibernate-types-52</artifactId>
+			<version>2.3.4</version>
+		</dependency>
+
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -61,6 +160,65 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.openapitools</groupId>
+				<artifactId>openapi-generator-maven-plugin</artifactId>
+				<version>${openapi-plugin.version}</version>
+				<executions>
+					<execution>
+						<!-- ihr api -->
+						<id>generate-ihr-api</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+
+							<inputSpec>${project.basedir}/src/main/resources/viewer-deeplink.yaml</inputSpec>
+
+							<generatorName>spring</generatorName>
+							<library>spring-boot</library>
+							<supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+							<configOptions>
+								<apiPackage>nl.bsoft.deeplink.generated.api</apiPackage>
+								<basePackage>nl.bsoft.deeplink.generated</basePackage>
+								<configPackage>nl.bsoft.deeplink.generated.generated.configuration</configPackage>
+								<invokerPackage>nl.bsoft.deeplink.generated.invoker</invokerPackage>
+								<modelPackage>nl.bsoft.deeplink.generated.model</modelPackage>
+								<dateLibrary>java8</dateLibrary>
+								<delegatePattern>true</delegatePattern>
+								<hideGenerationTimestamp>true</hideGenerationTimestamp>
+								<interfaceOnly>true</interfaceOnly>
+								<requestMappingMode>none</requestMappingMode>
+								<serializationLibrary>jackson</serializationLibrary>
+								<skipDefaultInterface>true</skipDefaultInterface>
+								<useBeanValidation>false</useBeanValidation>
+								<useJakartaEe>true</useJakartaEe>
+								<useSpringBoot3>true</useSpringBoot3>
+								<validateSpec>true</validateSpec>
+							</configOptions>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.flywaydb</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<configuration>
+					<url>jdbc:postgresql://localhost:5432/deeplink</url>
+					<user>testuser</user>
+					<password>12345</password>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>18</source>
+					<target>18</target>
 				</configuration>
 			</plugin>
 		</plugins>
