@@ -1,3 +1,4 @@
+
 spring:
   application:
     name: '@project.name@'
@@ -15,3 +16,5 @@ spring:
     password: 12345
     validateMigrationNaming: true
     locations: classpath:db/migration
+server:
+  port: 8082

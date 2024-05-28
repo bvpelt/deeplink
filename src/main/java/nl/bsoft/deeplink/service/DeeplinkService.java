@@ -31,7 +31,7 @@ public class DeeplinkService {
 
             UUID identificatie = UUID.randomUUID();
             deeplinkDto.setIdentificatie(identificatie.toString());
-            deeplinkDto.setContent(stringToJsonNode(deeplink.getContent()));
+            deeplinkDto.setContent(deeplink.getContent());
             log.info("Save deeplink: {}", deeplinkDto);
             deeplinkDtoRepository.save(deeplinkDto);
         } catch (Exception e) {
@@ -53,7 +53,7 @@ public class DeeplinkService {
             if (optionalDeeplinkDto.isPresent()) {
                 log.info("Found deeplink: {}", optionalDeeplinkDto.get());
                 deeplink = new Deeplink(optionalDeeplinkDto.get());
-                deeplink.setContent(jsonNodeToString(optionalDeeplinkDto.get().getContent()));
+                deeplink.setContent(optionalDeeplinkDto.get().getContent());
             }
         } catch (Exception e) {
             log.error("Error converting string to json: {} error {}", deeplink.getContent(), e);

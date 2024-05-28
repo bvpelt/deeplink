@@ -79,7 +79,7 @@ paths:
         '200':
           description: Resultaat van informatieproduct bevraging
           content:
-            application/json:
+            application/text:
               schema:
                 $ref: '#/components/schemas/DeeplinkId'
               examples:
@@ -224,7 +224,7 @@ components:
           type: string
         toestand:
           description: |
-            De string representatie van de toestand van de DSO LV webapplicatie 
+            De string representatie van de toestand van de DSO LV webapplicatie
           type: string
     Problem:
       type: object
@@ -238,7 +238,7 @@ components:
           type: string
           description: >-
             Een korte samenvatting van het probleemtype bedoeld voor
-            ontwikkelaars. 
+            ontwikkelaars.
         status:
           maximum: 600
           exclusiveMaximum: true
@@ -246,7 +246,7 @@ components:
           type: integer
           description: >-
             De HTTP statuscode gegenereerd door de server waar het probleem zich
-            voordoet. 
+            voordoet.
           format: int32
           example: 503
         detail:
@@ -259,7 +259,7 @@ components:
           format: uri
       description: >-
         Standaardformaat (`application/problem+json`) voor probleemdetails in
-        HTTP API's (RFC 7807).          
+        HTTP API's (RFC 7807).
   securitySchemes:
     api_key:
       type: apiKey

@@ -1,7 +1,6 @@
 package nl.bsoft.deeplink.database;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +19,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@TypeDef(name = "jsonb", typeClass = JsonBinaryType.class)
 @Table(name ="deeplink", schema = "public", catalog = "deeplink")
 public class DeeplinkDto implements Serializable {
     @Id
@@ -36,9 +34,9 @@ public class DeeplinkDto implements Serializable {
     @Column(name = "created")
     private LocalDateTime created;
 
-    @Type(type = "jsonb")
-    @Column(columnDefinition = "jsonb")
-    private JsonNode content;
+    @Type(JsonType.class)
+    @Column(nullable = false, columnDefinition = "jsonb")
+    private String content;
 
     public DeeplinkDto(final Deeplink deeplink) {
         this.id = deeplink.getId();
