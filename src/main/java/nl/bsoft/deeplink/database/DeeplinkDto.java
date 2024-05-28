@@ -34,6 +34,9 @@ public class DeeplinkDto implements Serializable {
     @Column(name = "created")
     private LocalDateTime created;
 
+    @Column(name = "md5hash")
+    private String md5hash;
+
     @Type(JsonType.class)
     @Column(nullable = false, columnDefinition = "jsonb")
     private String content;
@@ -49,12 +52,12 @@ public class DeeplinkDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DeeplinkDto that = (DeeplinkDto) o;
-        return Objects.equals(identificatie, that.identificatie) && Objects.equals(version, that.version) && Objects.equals(created, that.created) && Objects.equals(content, that.content);
+        return Objects.equals(identificatie, that.identificatie) && Objects.equals(version, that.version) && Objects.equals(created, that.created) && Objects.equals(md5hash, that.md5hash) && Objects.equals(content, that.content);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(identificatie, version, created, content);
+        return Objects.hash(identificatie, version, created, md5hash, content);
     }
 
     @Override
@@ -64,6 +67,7 @@ public class DeeplinkDto implements Serializable {
                 ", identificatie='" + identificatie + '\'' +
                 ", version='" + version + '\'' +
                 ", created=" + created +
+                ", md5hash='" + md5hash + '\'' +
                 ", content='" + content + '\'' +
                 '}';
     }

@@ -14,4 +14,6 @@ public interface DeeplinkDtoRepository extends PagingAndSortingRepository<Deepli
         JpaSpecificationExecutor<DeeplinkDto> {
 
     Optional<DeeplinkDto> findByIdentificatie(final String identificatie);
+
+    Optional<DeeplinkDto> findByMd5hash(final String md5hash);
 }

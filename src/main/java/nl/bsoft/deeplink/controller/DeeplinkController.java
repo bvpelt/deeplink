@@ -3,9 +3,11 @@ package nl.bsoft.deeplink.controller;
 import lombok.extern.slf4j.Slf4j;
 import nl.bsoft.deeplink.generated.api.ToestandenApi;
 import nl.bsoft.deeplink.generated.model.DeeplinkToestand;
+import nl.bsoft.deeplink.generated.model.Problem;
 import nl.bsoft.deeplink.model.Deeplink;
 import nl.bsoft.deeplink.service.DeeplinkService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 
@@ -22,14 +24,19 @@ public class DeeplinkController implements ToestandenApi {
     @Override
     public ResponseEntity<DeeplinkToestand> _toestandenIdentificatieGet(String identificatie) {
         Deeplink deeplink = deeplinkService.findDeeplink(identificatie);
-        DeeplinkToestand deeplinkToestand = new DeeplinkToestand();
+        DeeplinkToestand deeplinkToestand = null;
         if (deeplink != null) {
+            deeplinkToestand = new DeeplinkToestand();
             log.info("Retrieved toestand for identification: {}", deeplink);
             deeplinkToestand.setVersion(deeplink.getVersion());
             deeplinkToestand.setToestand(deeplink.getContent());
             return ResponseEntity.ok(deeplinkToestand);
         } else {
-            return (ResponseEntity<DeeplinkToestand>) ResponseEntity.status(HttpStatus.NOT_FOUND);
+            Problem problem = new Problem();
+            problem.setDetail("Not Found");
+            problem.setStatus(404);
+            problem.setTitle("Get identificatie");
+            return new ResponseEntity<DeeplinkToestand>(deeplinkToestand, HttpStatus.NOT_FOUND);
         }
     }
 
@@ -41,7 +48,6 @@ public class DeeplinkController implements ToestandenApi {
 
 
         String identificatie = deeplinkService.addDeeplink(deeplink);
-        log.info("Saved toestand with id: {}", identificatie);
 
         if (identificatie != null) {
             return ResponseEntity.ok(identificatie);

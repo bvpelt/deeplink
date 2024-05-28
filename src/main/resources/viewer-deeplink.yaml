@@ -53,6 +53,16 @@ paths:
               examples:
                 response:
                   $ref: '#/components/examples/DeeplinkToestand'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                response:
+                  $ref: '#/components/examples/NotFoundResponse'
+
   /toestanden:
     summary: Vastleggen/Ophalen van de toestand van een DSO LV Viewer
     description: Vastleggen/Ophalen van de toestand van een DSO LV Viewer
