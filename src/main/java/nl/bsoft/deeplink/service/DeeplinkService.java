@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import nl.bsoft.deeplink.database.DeeplinkDto;
+import nl.bsoft.deeplink.exception.NotFoundException;
 import nl.bsoft.deeplink.model.Deeplink;
 import nl.bsoft.deeplink.repository.DeeplinkDtoRepository;
 import nl.bsoft.deeplink.util.MD5Hash;
@@ -29,7 +30,6 @@ public class DeeplinkService {
     public String addDeeplink(final Deeplink deeplink) {
         DeeplinkDto deeplinkDto = null;
 
-        try {
             deeplinkDto = new DeeplinkDto(deeplink);
 
             String md5hash = MD5Hash.getMD5Hex(deeplink.getContent());
@@ -50,10 +50,7 @@ public class DeeplinkService {
                 log.info("Save deeplink: {}", deeplinkDto);
                 deeplinkDtoRepository.save(deeplinkDto);
             }
-        } catch (Exception e) {
-            log.error("Error converting string to json: {} error {}", deeplink.getContent(), e);
-            return null;
-        }
+
         if (deeplinkDto != null) {
             return deeplinkDto.getIdentificatie();
         } else {
@@ -61,19 +58,18 @@ public class DeeplinkService {
         }
     }
 
-    public Deeplink findDeeplink(final String identificatie) {
+    public Deeplink findDeeplink(final String identificatie) throws NotFoundException {
         Deeplink deeplink = null;
 
-        try {
             Optional<DeeplinkDto> optionalDeeplinkDto = deeplinkDtoRepository.findByIdentificatie(identificatie);
             if (optionalDeeplinkDto.isPresent()) {
                 log.info("Found deeplink: {}", optionalDeeplinkDto.get());
                 deeplink = new Deeplink(optionalDeeplinkDto.get());
                 deeplink.setContent(optionalDeeplinkDto.get().getContent());
+            } else {
+                throw new NotFoundException();
             }
-        } catch (Exception e) {
-            log.error("Error converting string to json: {} error {}", deeplink.getContent(), e);
-        }
+
         return deeplink;
     }
 

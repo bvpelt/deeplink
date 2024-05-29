@@ -56,12 +56,22 @@ paths:
         '404':
           description: Not found
           content:
-            application/json:
+            application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
               examples:
                 response:
                   $ref: '#/components/examples/NotFoundResponse'
+        default:
+          description: Unexpected problem
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              examples:
+                response:
+                  $ref: '#/components/examples/NotFoundResponse'
+
 
   /toestanden:
     summary: Vastleggen/Ophalen van de toestand van een DSO LV Viewer
@@ -98,7 +108,7 @@ paths:
         '400':
           description: Bad request
           content:
-            application/json:
+            application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
               examples:
@@ -107,7 +117,7 @@ paths:
         '404':
           description: Not found
           content:
-            application/json:
+            application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
               examples:
@@ -116,7 +126,7 @@ paths:
         '406':
           description: Not acceptable
           content:
-            application/json:
+            application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
               examples:
@@ -125,7 +135,7 @@ paths:
         '412':
           description: Precondition failed
           content:
-            application/json:
+            application/problem+json:
               schema:
                 $ref: '#/components/schemas/Problem'
               examples:
